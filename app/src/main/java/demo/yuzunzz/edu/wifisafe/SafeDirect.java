@@ -31,7 +31,6 @@ public class SafeDirect{
         for (int i = 0; i < orderList.size(); i++) {
             ScanResultPro scanResultPro = orderList.get(i);
             scanResultPro.setSameSSID(Collections.frequency(set, scanResultPro.getSSID()));
-//            System.out.println("count:"+scanResultPro.getSSID()+"_________"+Collections.frequency(set, scanResultPro.getSSID()));
             if (dao.getFirm(scanResultPro.getBSSID()).equals("unknown")
                     || Collections.frequency(set, scanResultPro.getSSID())>1){
                 scanResultPro.setSafeLevel("low");
@@ -46,12 +45,8 @@ public class SafeDirect{
 
             if (!dao.isApExist(scanResultPro.getBSSID().trim())){
                 dao.add(scanResultPro);
-            } else {
-                System.out.println("exist +1"+scanResultPro.getSSID().trim());
             }
-            if (dao.getLatestFlag(scanResultPro.getBSSID()).equals("danger")){
-                System.out.println("danager"+scanResultPro.getSSID().trim());
-            } else {
+            if (!dao.getLatestFlag(scanResultPro.getBSSID()).equals("danger")){
                 result.add(scanResultPro);
             }
         }

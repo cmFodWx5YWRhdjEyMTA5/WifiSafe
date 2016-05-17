@@ -46,12 +46,12 @@ public class AtyWhiteList extends Activity {
                         switch (which){
                             case 0:
                                 dao.changeApFlag(mWhiteList.get(position).getBSSID(),0);
-                                mWhiteList = dao.getBlackListAp();
+                                mWhiteList = dao.getWhiteListAp();
                                 mAdapter.refreshList(mWhiteList);
                                 break;
                             case 1:
                                 dao.changeApFlag(mWhiteList.get(position).getBSSID(),1);
-                                mWhiteList = dao.getBlackListAp();
+                                mWhiteList = dao.getWhiteListAp();
                                 mAdapter.refreshList(mWhiteList);
                                 break;
                         }
