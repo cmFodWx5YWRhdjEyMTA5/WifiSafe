@@ -2,21 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="demo.yuzunzz.edu.wifisafe">
 
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
+
         <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
         <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-=======
->>>>>>> origin/master
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,12 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<<<<<<< HEAD
+
         <activity android:name=".AtyWhiteList"></activity>
         <activity android:name=".AtyBlackList"></activity>
         <activity android:name=".AtyWifiListPro"></activity>
-=======
->>>>>>> origin/master
+
     </application>
 
 </manifest>
