@@ -13,6 +13,7 @@ import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 import demo.yuzunzz.edu.wifisafe.bean.ScanResultPro;
@@ -32,7 +33,9 @@ public class WifiUtil {
     WifiLock mWifiLock;
 
 
-
+    public enum WifiCipherType {
+        WIFICIPHER_WEP, WIFICIPHER_WPA, WIFICIPHER_NOPASS, WIFICIPHER_INVALID
+    }
 
 
 
@@ -132,11 +135,27 @@ public class WifiUtil {
     }
 
     // 添加一个网络并连接
-    public void addNetwork(WifiConfiguration wcg) {
-        int wcgID = mWifiManager.addNetwork(wcg);
-        boolean b =  mWifiManager.enableNetwork(wcgID, true);
-        System.out.println("a--" + wcgID);
-        System.out.println("b--" + b);
+    public boolean addNetwork(WifiConfiguration wcg) {
+        if (mWifiInfo != null){
+            mWifiManager.disableNetwork(mWifiInfo.getNetworkId());
+        }
+        boolean flag = false;
+        if (wcg.networkId > 0){
+            flag = mWifiManager.enableNetwork(wcg.networkId,true);
+            mWifiManager.updateNetwork(wcg);
+        } else {
+            int netId = mWifiManager.addNetwork(wcg);
+            if (netId > 0){
+                mWifiManager.saveConfiguration();
+                flag = mWifiManager.enableNetwork(netId, true);
+            }
+        }
+        return  flag;
+    }
+
+    public boolean removeWifi(int networkId){
+        return mWifiManager.removeNetwork(networkId);
+
     }
 
     // 断开指定ID的网络
@@ -232,5 +251,6 @@ public class WifiUtil {
         }
         return 0;
     }
+
 
 }

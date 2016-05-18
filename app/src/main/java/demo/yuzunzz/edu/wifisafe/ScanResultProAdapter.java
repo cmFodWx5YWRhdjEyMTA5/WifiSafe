@@ -83,9 +83,7 @@ public class ScanResultProAdapter extends BaseAdapter {
         ScanResultPro scanResultPro = mList.get(position);
         TextView tvSsid = (TextView) convertView.findViewById(R.id.tv_ssid);
         tvSsid.setText(scanResultPro.getSSID());
-        if (scanResultPro.getSameSSID()>1){
-            tvSsid.setTextColor(Color.BLUE);
-        }
+
         System.out.println(scanResultPro.getSSID()+""+scanResultPro.getSameSSID());
         TextView tvLevel = (TextView) convertView.findViewById(R.id.tv_level);
         tvLevel.setText(String.valueOf(scanResultPro.getLevel()));
@@ -94,7 +92,7 @@ public class ScanResultProAdapter extends BaseAdapter {
         tvSafeLevel.setText(String.valueOf(scanResultPro.getSafeLevel()));
 
         TextView tvEncrypt = (TextView) convertView.findViewById(R.id.tv_encrypt);
-        tvEncrypt.setText(String.valueOf(scanResultPro.getEncryptString(scanResultPro.getCapabilities())));
+        tvEncrypt.setText(String.valueOf(scanResultPro.getCapabilities()));
 
         TextView tvPwd = (TextView) convertView.findViewById(R.id.tv_pwd);
         if(mWifiPwdMap.containsKey(scanResultPro.getSSID())){

@@ -3,6 +3,9 @@ package demo.yuzunzz.edu.wifisafe;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,16 +18,17 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.support.v4.app.FragmentActivity;
+import demo.yuzunzz.edu.wifisafe.ShowWifiInfoDialog.IRemoveWifi;
 
 import java.util.List;
 import demo.yuzunzz.edu.wifisafe.bean.ScanResultPro;
 import demo.yuzunzz.edu.wifisafe.dao.Dao;
 
-
 /**
  * Created by 97349 on 2016/4/9.
  */
-public class AtyWifiListPro extends Activity {
+public class AtyWifiListPro extends FragmentActivity implements IRemoveWifi{
     private ListView lvResultList;
     private List<ScanResultPro> mResultList;
     private ScanResultProAdapter mAdapter;
@@ -66,7 +70,7 @@ public class AtyWifiListPro extends Activity {
         lvResultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                Toast.makeText(AtyWifiListPro.this,"您选择的是"+mResultList.get(position).getSSID()+"   "+mResultList.get(position).getCapabilities(), Toast.LENGTH_SHORT).show();
+
                 if (!mResultList.get(position).getCapabilities().contains("OPEN")){
                     AlertDialog.Builder dialog = new AlertDialog.Builder(AtyWifiListPro.this);
                     dialog.setTitle(mResultList.get(position).getSSID());
@@ -87,21 +91,18 @@ public class AtyWifiListPro extends Activity {
                     dialog.setPositiveButton("连接", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),String.valueOf(etConnectPwd.getText()),3));
-                            check = new Thread() {
-                                @Override
-                                public void run() {
-                                    String info[] = new String[]{mResultList.get(position).getSSID(),String.valueOf(etConnectPwd.getText())};
-                                    Message message = handler.obtainMessage(1, info);
-                                    handler.sendMessage(message);
-                                    handler.postDelayed(this, 2000);
-                                }
-                            };
-                            check.start();
+                            if (mResultList.get(position).getCapabilities().contains("WEP")){
+                                mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),String.valueOf(etConnectPwd.getText()),2));
+                            } else {
+                                mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),String.valueOf(etConnectPwd.getText()),3));
+                            }
                         }
                     });
                     dialog.setNegativeButton("取消",null);
                     dialog.create().show();
+                } else {
+                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),"",1));
+                    System.out.println(".......");
                 }
 
             }
@@ -141,7 +142,10 @@ public class AtyWifiListPro extends Activity {
                                 mAdapter.refreshResultList(mResultList);
                                 break;
                             case 2:
-                                Toast.makeText(AtyWifiListPro.this,dao.getFirm(mResultList.get(position).getBSSID()),Toast.LENGTH_SHORT).show();
+                                ScanResultPro mTemp = mResultList.get(position);
+                                WifiInfo mInfo = mWifiUtil.getConnectedWifiInfo();
+//                                Toast.makeText(AtyWifiListPro.this,dao.getFirm(mResultList.get(position).getBSSID()),Toast.LENGTH_SHORT).show();
+                                ShowWifiInfoDialog.show(AtyWifiListPro.this, AtyWifiListPro.this, mInfo, mTemp.getCapabilities());
                                 break;
                         }
 
@@ -188,27 +192,7 @@ public class AtyWifiListPro extends Activity {
 
     }
 
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 1:
-                    count++;
-                    String info[] = (String[])msg.obj;
-                    System.out.println(mWifiUtil.getConnectStatus(info[0]));
-                    if (mWifiUtil.getConnectStatus(info[0]) == 2 || count == 10) {
-                        handler.removeCallbacks(check);
-                        Toast.makeText(AtyWifiListPro.this,"连接超时",Toast.LENGTH_LONG).show();
 
-                    }
-                    if (mWifiUtil.getConnectStatus(info[0]) == 2){
-                        checkWeakPassword(info[1]);
-                    }
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
 
     public void checkWeakPassword(String pwd){
         String level = "";
@@ -226,4 +210,10 @@ public class AtyWifiListPro extends Activity {
         Toast.makeText(AtyWifiListPro.this,pwd + level,Toast.LENGTH_LONG).show();
     }
 
+
+    @Override
+    public void onRemoveClick(int networkId) {
+        mWifiUtil.removeWifi(networkId);
+        mWifiUtil.startScan();
+    }
 }

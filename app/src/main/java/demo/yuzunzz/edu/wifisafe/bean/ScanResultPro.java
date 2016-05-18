@@ -43,10 +43,10 @@ public class ScanResultPro {
             sb.append("/");
             sb.append("WPA2");
         }
-        if(capability.contains("WPS")){
-            sb.append("/");
-            sb.append("WPS");
-        }
+//        if(capability.contains("WPS")){
+//            sb.append("/");
+//            sb.append("WPS");
+//        }
         if(TextUtils.isEmpty(sb))
             return "OPEN";
         return sb.toString();
