@@ -71,39 +71,14 @@ public class AtyWifiListPro extends FragmentActivity implements IRemoveWifi{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                if (!mResultList.get(position).getCapabilities().contains("OPEN")){
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(AtyWifiListPro.this);
-                    dialog.setTitle(mResultList.get(position).getSSID());
-                    View v = AtyWifiListPro.this.getLayoutInflater().inflate(R.layout.connect_dialog,null);
-                    dialog.setView(v);
-                    etConnectPwd = (EditText) v.findViewById(R.id.et_connect_pwd);
-                    cbCheckPwd = (CheckBox) v.findViewById(R.id.cb_check_pwd);
-                    cbCheckPwd.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (cbCheckPwd.isChecked()){
-                                etConnectPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                            } else {
-                                etConnectPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                            }
-                        }
-                    });
-                    dialog.setPositiveButton("连接", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (mResultList.get(position).getCapabilities().contains("WEP")){
-                                mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),String.valueOf(etConnectPwd.getText()),2));
-                            } else {
-                                mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),String.valueOf(etConnectPwd.getText()),3));
-                            }
-                        }
-                    });
-                    dialog.setNegativeButton("取消",null);
-                    dialog.create().show();
-                } else {
-                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),"",1));
-                    System.out.println(".......");
-                }
+				ScanResultPro mTemp = mResultList.get(position);
+				WifiInfo mInfo = mWifiUtil.getConnectedWifiInfo();
+				
+                if (mInfo != null && mInfo.getBSSID().equals(mTemp.getBSSID())){
+					ShowWifiInfoDialog.show(AtyWifiListPro.this, AtyWifiListPro.this, mInfo, mTemp.getCapabilities());
+				} else {
+					connectAP(mTemp);
+				}
 
             }
         });
@@ -216,4 +191,42 @@ public class AtyWifiListPro extends FragmentActivity implements IRemoveWifi{
         mWifiUtil.removeWifi(networkId);
         mWifiUtil.startScan();
     }
+	
+	public void connectAP(ScanResultPro mTemp){
+		if (!mTemp.getCapabilities().contains("OPEN")){
+			AlertDialog.Builder dialog = new AlertDialog.Builder(AtyWifiListPro.this);
+			dialog.setTitle(mTemp.getSSID());
+			View v = AtyWifiListPro.this.getLayoutInflater().inflate(R.layout.connect_dialog,null);
+			dialog.setView(v);
+			etConnectPwd = (EditText) v.findViewById(R.id.et_connect_pwd);
+			cbCheckPwd = (CheckBox) v.findViewById(R.id.cb_check_pwd);
+			cbCheckPwd.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						if (cbCheckPwd.isChecked()){
+							etConnectPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+						} else {
+							etConnectPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+						}
+					}
+				});
+			final ScanResultPro mTemp1 = mTemp;
+			dialog.setPositiveButton("连接", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (mTemp1.getCapabilities().contains("WEP")){
+							mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mTemp1.getSSID(),String.valueOf(etConnectPwd.getText()),2));
+						} else {
+							mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mTemp1.getSSID(),String.valueOf(etConnectPwd.getText()),3));
+						}
+					}
+				});
+			dialog.setNegativeButton("取消",null);
+			dialog.create().show();
+		} else {
+//                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),"",1));
+//                    System.out.println(".......");
+			Toast.makeText(AtyWifiListPro.this,"o00ps!!!!",Toast.LENGTH_SHORT).show();
+		}
+	}
 }
