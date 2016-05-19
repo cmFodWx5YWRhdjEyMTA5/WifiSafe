@@ -54,6 +54,19 @@ public class AtyBlackList extends Activity {
                                 mBlackList = dao.getBlackListAp();
                                 mAdapter.refreshList(mBlackList);
                                 break;
+                            case 2:
+                                AlertDialog.Builder dialog1 = new AlertDialog.Builder(AtyBlackList.this);
+                                dialog1.setTitle(mBlackList.get(position).getSSID());
+                                dialog1.setMessage("状态消息\t\t禁止连接\n"
+                                        +"AP MAC\t\t"+mBlackList.get(position).getBSSID()+"\n"
+                                        +"AP 型号\t\t"+mBlackList.get(position).getFirm()+"\n"
+                                        +"此AP上一次被搜索到的时间\n"+mBlackList.get(position).getLastScanTime());
+                                dialog1.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                dialog1.create().show();
                         }
                     }
                 });

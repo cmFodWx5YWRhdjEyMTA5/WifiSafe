@@ -42,27 +42,30 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         String dbDirPath = "/data/data/demo.yuzunzz.edu.wifisafe/databases";
         File dbDir = new File(dbDirPath);
+        File dbFile = new File(dbDirPath+"/test.db");
         if(!dbDir.exists()) // 如果不存在该目录则创建
             dbDir.mkdir();
-        // 打开静态数据库文件的输入流
-        InputStream is = this.getResources().openRawResource(R.raw.test);
-        // 打开目标数据库文件的输出流
-        FileOutputStream os = null;
-        try {
-            os = new FileOutputStream(dbDirPath+"/test.db");
-            byte[] buffer = new byte[1024];
-            int count = 0;
-            // 将静态数据库文件拷贝到目的地
-            while ((count = is.read(buffer)) > 0) {
-                os.write(buffer, 0, count);
+        if (!dbFile.exists()){
+            // 打开静态数据库文件的输入流
+            InputStream is = this.getResources().openRawResource(R.raw.test);
+            // 打开目标数据库文件的输出流
+            FileOutputStream os = null;
+            try {
+                os = new FileOutputStream(dbDirPath+"/test.db");
+                byte[] buffer = new byte[1024];
+                int count = 0;
+                // 将静态数据库文件拷贝到目的地
+                while ((count = is.read(buffer)) > 0) {
+                    os.write(buffer, 0, count);
+                }
+                System.out.println("finish copy");
+                is.close();
+                os.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            System.out.println("finish copy");
-            is.close();
-            os.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 

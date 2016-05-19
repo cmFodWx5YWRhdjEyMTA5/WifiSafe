@@ -28,8 +28,8 @@ public class Dao {
     public void add(ScanResultPro scanResultPro){
         try {
             mDatabase.beginTransaction();
-            String sql = "INSERT INTO list VALUES(null,?,?,?,?)";
-            mDatabase.execSQL(sql,new Object[] {scanResultPro.getSSID(),scanResultPro.getBSSID(),scanResultPro.getFlag(),scanResultPro.getSafeLevel()});
+            String sql = "INSERT INTO list VALUES(null,?,?,?,?,?)";
+            mDatabase.execSQL(sql,new Object[] {scanResultPro.getSSID(),scanResultPro.getBSSID(),scanResultPro.getFlag(),scanResultPro.getSafeLevel(),scanResultPro.getLastScanTime()});
             mDatabase.setTransactionSuccessful();
         } catch (SQLException e){
             e.printStackTrace();
@@ -75,13 +75,24 @@ public class Dao {
         return safelevel;
     }
 
+    public String getLastScanTime(String BSSID){
+        Cursor c = mDatabase.query("list",new String[]{"lastScanTime"},"BSSID=?",new String[] {BSSID},null,null,null);
+        String lastScanTime = "";
+        while (c.moveToNext()){
+            lastScanTime = c.getString(c.getColumnIndex("lastScanTime"));
+        }
+        return lastScanTime;
+    }
+
     public List<ScanResultPro> getBlackListAp(){
         List<ScanResultPro> list = new ArrayList<ScanResultPro>();
         Cursor c = mDatabase.query("list",new String[]{"SSID","BSSID"},"flag=?",new String[] {"danger"},null,null,null);
         while (c.moveToNext()){
             String ssid = c.getString(c.getColumnIndex("SSID"));
             String bssid = c.getString(c.getColumnIndex("BSSID"));
-            ScanResultPro scanResultPro = new ScanResultPro(ssid,bssid,"danger","dangerrous");
+            String firm = getFirm(bssid);
+            String lastScanTime  = getLastScanTime(bssid);
+            ScanResultPro scanResultPro = new ScanResultPro(ssid,bssid,"danger","dangerrous",firm,lastScanTime);
             list.add(scanResultPro);
         }
         return list;
@@ -93,7 +104,9 @@ public class Dao {
         while (c.moveToNext()){
             String ssid = c.getString(c.getColumnIndex("SSID"));
             String bssid = c.getString(c.getColumnIndex("BSSID"));
-            ScanResultPro scanResultPro = new ScanResultPro(ssid,bssid,"trust","safe");
+            String firm = getFirm(bssid);
+            String lastScanTime  = getLastScanTime(bssid);
+            ScanResultPro scanResultPro = new ScanResultPro(ssid,bssid,"trust","safe",firm,lastScanTime);
             list.add(scanResultPro);
         }
         return list;
@@ -128,6 +141,15 @@ public class Dao {
             default:
                 break;
         }
+        mDatabase.beginTransaction();
+        mDatabase.update("list",cv,"BSSID=?",new String[] {BSSID});
+        mDatabase.setTransactionSuccessful();
+        mDatabase.endTransaction();
+    }
+
+    public void updateLastScanTime(String BSSID,String time){
+        ContentValues cv = new ContentValues();
+        cv.put("lastScanTime",time);
         mDatabase.beginTransaction();
         mDatabase.update("list",cv,"BSSID=?",new String[] {BSSID});
         mDatabase.setTransactionSuccessful();

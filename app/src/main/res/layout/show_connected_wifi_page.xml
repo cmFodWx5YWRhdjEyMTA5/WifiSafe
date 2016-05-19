@@ -166,8 +166,33 @@
 					android:text="Ap MAC"
 					android:textSize="13sp" />
 
+
 				<TextView
 					android:id="@+id/ap_mac_tv"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:text=""
+					android:textSize="13sp" />
+			</TableRow>
+
+			<TableRow
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:padding="5dp" >
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="left|center"
+					android:text="Ap 型号"
+					android:textSize="13sp" />
+
+
+				<TextView
+					android:id="@+id/ap_firm_tv"
 					android:layout_width="fill_parent"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
@@ -288,6 +313,28 @@
 					android:gravity="center"
 					android:text=""
 					android:textSize="13sp" />
+			</TableRow>
+			<TableRow
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:padding="5dp" >
+
+				<TextView
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="left|center"
+					android:text="LastScanTime"
+					android:textSize="13sp" />
+
+				<TextView
+					android:id="@+id/tv_lastScanTime"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:layout_weight="1"
+					android:gravity="center"
+					android:text=""
+					android:textSize="12sp" />
 			</TableRow>
 		</TableLayout>
 	</ScrollView>

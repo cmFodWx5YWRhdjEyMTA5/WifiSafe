@@ -15,13 +15,17 @@
         <TextView android:id="@+id/tv_flag_ssid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="60px"
-            android:text="1"/>
+            android:layout_alignParentLeft="true"
+            android:padding="10dp"
+            android:text=""
+            android:textSize="18sp" />
 
         <TextView android:id="@+id/tv_flag_bssid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="45px"
+            android:layout_alignParentLeft="true"
+            android:padding="10dp"
+            android:textSize="17sp"
             android:text="1"/>
 
 

@@ -54,6 +54,19 @@ public class AtyWhiteList extends Activity {
                                 mWhiteList = dao.getWhiteListAp();
                                 mAdapter.refreshList(mWhiteList);
                                 break;
+                            case 2:
+                                AlertDialog.Builder dialog1 = new AlertDialog.Builder(AtyWhiteList.this);
+                                dialog1.setTitle(mWhiteList.get(position).getSSID());
+                                dialog1.setMessage("状态消息\t\t可信任\n"
+                                        +"AP MAC\t\t"+mWhiteList.get(position).getBSSID()+"\n"
+                                        +"AP 型号\t\t"+mWhiteList.get(position).getFirm()+"\n"
+                                        +"此AP上一次被搜索到的时间\n"+mWhiteList.get(position).getLastScanTime());
+                                dialog1.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                dialog1.create().show();
                         }
                     }
                 });

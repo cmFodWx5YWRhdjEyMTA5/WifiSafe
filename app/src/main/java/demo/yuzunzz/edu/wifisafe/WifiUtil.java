@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.DhcpInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -156,6 +157,12 @@ public class WifiUtil {
     public boolean removeWifi(int networkId){
         return mWifiManager.removeNetwork(networkId);
 
+    }
+
+    public static DhcpInfo getDhcpInfo(Context mContext){
+        WifiManager wm = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
+        DhcpInfo di = wm.getDhcpInfo();
+        return di;
     }
 
     // 断开指定ID的网络
