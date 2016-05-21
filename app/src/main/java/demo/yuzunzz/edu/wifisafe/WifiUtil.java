@@ -29,18 +29,10 @@ public class WifiUtil {
     private List<ScanResult> mScanResultList;
     // 网络连接列表
     private List<WifiConfiguration> mWifiConfiguration;
-    private ConnectivityManager mConnectivityManager;
     // 定义一个WifiLock
     WifiLock mWifiLock;
 
 
-    public enum WifiCipherType {
-        WIFICIPHER_WEP, WIFICIPHER_WPA, WIFICIPHER_NOPASS, WIFICIPHER_INVALID
-    }
-
-
-
-    //    ScanResultPro mItemScanResultPro;
     ArrayList<ScanResultPro> mScanResultProList;
 
     // 构造器
@@ -72,25 +64,18 @@ public class WifiUtil {
             Toast.makeText(mContext, "wifi已关闭", Toast.LENGTH_SHORT).show();
         }
     }
+	
 
     // 检查当前WIFI状态
-    // Field descriptor #21 I
-//    public static final int WIFI_STATE_DISABLED = 1;
-
-    // Field descriptor #21 I
-//    public static final int WIFI_STATE_DISABLING = 0;
-
-    // Field descriptor #21 I
-//    public static final int WIFI_STATE_ENABLED = 3;
-
-    // Field descriptor #21 I
-//    public static final int WIFI_STATE_ENABLING = 2;
-
-    // Field descriptor #21 I
-//    public static final int WIFI_STATE_UNKNOWN = 4;
+	// public static final int WIFI_STATE_DISABLED = 1;
+	// public static final int WIFI_STATE_DISABLING = 0;
+	// public static final int WIFI_STATE_ENABLED = 3;
+    // public static final int WIFI_STATE_ENABLING = 2;
+    // public static final int WIFI_STATE_UNKNOWN = 4;
     public int checkState() {
         return mWifiManager.getWifiState();
     }
+	
 
     public void startScan() {
         mWifiManager.startScan();
@@ -213,7 +198,7 @@ public class WifiUtil {
             config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
             config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
             config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-            //config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
             config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
             config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
             config.status = WifiConfiguration.Status.ENABLED;
@@ -239,24 +224,6 @@ public class WifiUtil {
 
     public WifiInfo getConnectedWifiInfo() {
         return mWifiManager.getConnectionInfo();
-    }
-
-    public int getConnectStatus(String SSID){
-        mWifiInfo = mWifiManager.getConnectionInfo();
-        if (mWifiInfo != null){
-            if(mWifiInfo.getSSID() != null && mWifiInfo.getSSID().equals(SSID)){
-                int Ip = mWifiInfo.getIpAddress();
-                String strIp = "" + (Ip & 0xFF) + "." + ((Ip >> 8) & 0xFF) + "." + ((Ip >> 16) & 0xFF) + "." + ((Ip >> 24) & 0xFF);
-                if(mWifiInfo.getBSSID() != null && mWifiInfo.getSSID() != null && strIp != null && !strIp.equals("0.0.0.0")){
-                    return 2;
-                } else {
-                    return 1;
-                }
-            } else {
-                return 0;
-            }
-        }
-        return 0;
     }
 
 

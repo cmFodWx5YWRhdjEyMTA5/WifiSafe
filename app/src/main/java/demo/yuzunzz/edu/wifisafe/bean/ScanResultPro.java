@@ -5,7 +5,7 @@ import android.text.TextUtils;
 /**
  * Created by 97349 on 2016/2/29.
  */
-public class ScanResultPro {
+public class ScanResultPro{
     private String SSID,BSSID,capabilities,flag,safeLevel,firm,lastScanTime;
     private int level,frequency,sameSSID;
     public ScanResultPro(ScanResult mScanResult) {

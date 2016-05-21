@@ -23,8 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	 * */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		executeAssetsSQL(db, "schema.sql");
-		System.out.println("创建表");
+		
 	}
 
 
@@ -38,49 +37,9 @@ public class DBHelper extends SQLiteOpenHelper {
 			return;
 		}
 		Configuration.oldVersion = oldVersion;
-
-
-		int changeCnt = newVersion - oldVersion;
-		for (int i = 0; i < changeCnt; i++) {
-			// 依次执行updatei_i+1文件      由1更新到2 [1-2]，2更新到3 [2-3]
-			String schemaName = "update" + (oldVersion + i) + "_"
-					+ (oldVersion + i + 1) + ".sql";
-			executeAssetsSQL(db, schemaName);
-		}
 	}
 
 
-	/**
-	 * 读取数据库文件（.sql），并执行sql语句
-	 * */
-	private void executeAssetsSQL(SQLiteDatabase db, String schemaName) {
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new InputStreamReader(mContext.getAssets()
-					.open(Configuration.DB_PATH + "/" + schemaName)));
-
-			System.out.println("路径:"+Configuration.DB_PATH + "/" + schemaName);
-			String line;
-			String buffer = "";
-			while ((line = in.readLine()) != null) {
-				buffer += line;
-				if (line.trim().endsWith(";")) {
-					db.execSQL(buffer.replace(";", ""));
-					System.out.println(buffer);
-					buffer = "";
-				}
-			}
-		} catch (IOException e) {
-			Log.e("db-error", e.toString());
-		} finally {
-			try {
-				if (in != null)
-					in.close();
-			} catch (IOException e) {
-				Log.e("db-error", e.toString());
-			}
-		}
-	}
-
+	
 
 }
