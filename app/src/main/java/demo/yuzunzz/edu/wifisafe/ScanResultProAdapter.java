@@ -52,7 +52,6 @@ public class ScanResultProAdapter extends BaseAdapter {
         mWifiPwdInfo.addAll(mResult);
         mWifiPwdMap.clear();
         for(int i = 0 ; i < mWifiPwdInfo.size() ; i++){
-            Log.d(MainActivity.class.getSimpleName(), "ssid = " + mWifiPwdInfo.get(i).Ssid + " pwd = " + mWifiPwdInfo.get(i).Password);
             if(mWifiPwdInfo.get(i) != null){
                 mWifiPwdMap.put(mWifiPwdInfo.get(i).Ssid, mWifiPwdInfo.get(i).Password);
             }
@@ -88,20 +87,19 @@ public class ScanResultProAdapter extends BaseAdapter {
         }
 
         ScanResultPro scanResultPro = mList.get(position);
-        TextView tvSsid = (TextView) convertView.findViewById(R.id.tv_ssid);
+        TextView tvSsid = (TextView) convertView.findViewById(R.id.tv_sri_ssid);
         tvSsid.setText(scanResultPro.getSSID());
 
-        System.out.println(scanResultPro.getSSID()+""+scanResultPro.getSameSSID());
-        TextView tvLevel = (TextView) convertView.findViewById(R.id.tv_level);
+        TextView tvLevel = (TextView) convertView.findViewById(R.id.tv_sri_level);
         tvLevel.setText(String.valueOf(scanResultPro.getLevel()));
 
-        TextView tvSafeLevel = (TextView) convertView.findViewById(R.id.tv_safe_level);
+        TextView tvSafeLevel = (TextView) convertView.findViewById(R.id.tv_sri_safe_level);
         tvSafeLevel.setText(String.valueOf(scanResultPro.getSafeLevel()));
 
-        TextView tvEncrypt = (TextView) convertView.findViewById(R.id.tv_encrypt);
+        TextView tvEncrypt = (TextView) convertView.findViewById(R.id.tv_sri_encrypt);
         tvEncrypt.setText(String.valueOf(scanResultPro.getCapabilities()));
 
-        TextView tvPwd = (TextView) convertView.findViewById(R.id.tv_pwd);
+        TextView tvPwd = (TextView) convertView.findViewById(R.id.tv_sri_pwd);
         if(mWifiPwdMap.containsKey(scanResultPro.getSSID())){
             tvPwd.setVisibility(View.VISIBLE);
             tvPwd.setText(mWifiPwdMap.get(scanResultPro.getSSID()));
@@ -110,19 +108,12 @@ public class ScanResultProAdapter extends BaseAdapter {
             tvPwd.setVisibility(View.GONE);
         }
 
-        TextView tvConnect = (TextView) convertView.findViewById(R.id.tv_connect);
-
+        TextView tvConnect = (TextView) convertView.findViewById(R.id.tv_sri_connect);
         if(mInfo != null){
             if(mInfo.getSSID() != null && mInfo.getSSID().equals("\"" + scanResultPro.getSSID() + "\"")){
-
                 tvConnect.setVisibility(View.VISIBLE);
-
                 int Ip = mInfo.getIpAddress() ;
-
-//                Log.d(MainActivity.class.getSimpleName(), "ip = " + Ip);
-
                 String strIp = "" + (Ip & 0xFF) + "." + ((Ip >> 8) & 0xFF) + "." + ((Ip >> 16) & 0xFF) + "." + ((Ip >> 24) & 0xFF);
-
                 if(mInfo.getBSSID() != null && mInfo.getSSID() != null && strIp != null && !strIp.equals("0.0.0.0")){
                     tvConnect.setText("已连接");
                 }else{
@@ -132,7 +123,6 @@ public class ScanResultProAdapter extends BaseAdapter {
                 tvConnect.setVisibility(View.GONE);
             }
         }else{
-
             tvConnect.setVisibility(View.GONE);
         }
         return convertView;

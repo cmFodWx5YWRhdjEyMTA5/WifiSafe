@@ -66,15 +66,6 @@ public class Dao {
         return flag;
     }
 
-    public String getLatestSafeLevel(String BSSID){
-        Cursor c = mDatabase.query("list",new String[]{"safeLevel"},"BSSID=?",new String[] {BSSID},null,null,null);
-        String safelevel = "";
-        while (c.moveToNext()){
-            safelevel = c.getString(c.getColumnIndex("safeLevel"));
-        }
-        return safelevel;
-    }
-
     public String getLastScanTime(String BSSID){
         Cursor c = mDatabase.query("list",new String[]{"lastScanTime"},"BSSID=?",new String[] {BSSID},null,null,null);
         String lastScanTime = "";

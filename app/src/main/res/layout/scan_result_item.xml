@@ -11,7 +11,7 @@
 		android:layout_height="match_parent" >
 
 		<TextView
-			android:id="@+id/tv_ssid"
+			android:id="@+id/tv_sri_ssid"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentLeft="true"
@@ -20,41 +20,41 @@
 			android:textSize="18sp" />
 
 		<TextView
-			android:id="@+id/tv_pwd"
+			android:id="@+id/tv_sri_pwd"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_toRightOf="@id/tv_ssid"
+			android:layout_toRightOf="@id/tv_sri_ssid"
 			android:padding="10dp"
 			android:text="" />
 
 		<TextView
-			android:id="@+id/tv_safe_level"
+			android:id="@+id/tv_sri_safe_level"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@id/tv_ssid"
+			android:layout_below="@id/tv_sri_ssid"
 			android:padding="10dp"
 			android:text="" />
 
 		<TextView
-			android:id="@+id/tv_level"
+			android:id="@+id/tv_sri_level"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@id/tv_ssid"
-			android:layout_toRightOf="@id/tv_safe_level"
+			android:layout_below="@id/tv_sri_ssid"
+			android:layout_toRightOf="@id/tv_sri_safe_level"
 			android:padding="10dp"
 			android:text="" />
 
 		<TextView
-			android:id="@+id/tv_encrypt"
+			android:id="@+id/tv_sri_encrypt"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_below="@id/tv_ssid"
-			android:layout_toRightOf="@id/tv_level"
+			android:layout_below="@id/tv_sri_ssid"
+			android:layout_toRightOf="@id/tv_sri_level"
 			android:padding="10dp"
 			android:text="" />
 
 		<TextView
-			android:id="@+id/tv_connect"
+			android:id="@+id/tv_sri_connect"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_alignParentRight="true"

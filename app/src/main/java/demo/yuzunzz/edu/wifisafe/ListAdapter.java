@@ -48,7 +48,6 @@ public class ListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            //设置每个列表项布局
             convertView = inflater.inflate(R.layout.flag_list_item, null);
         }
         ScanResultPro scanResultPro = mList.get(position);

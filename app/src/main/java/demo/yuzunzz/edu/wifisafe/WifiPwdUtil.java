@@ -72,9 +72,7 @@ public class WifiPwdUtil {
 		return wifiInfos;
 	}
 	public static class WifiInfomation{
-		
 		public String Ssid;
-		
 		public String Password;
 	}
 }

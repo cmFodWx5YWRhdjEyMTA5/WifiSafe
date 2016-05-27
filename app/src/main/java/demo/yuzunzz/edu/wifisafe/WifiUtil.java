@@ -21,33 +21,19 @@ import demo.yuzunzz.edu.wifisafe.bean.ScanResultPro;
 
 public class WifiUtil {
     private Context mContext;
-    // 定义WifiManager对象
     private WifiManager mWifiManager;
-    // 定义WifiInfo对象
     private WifiInfo mWifiInfo;
-    // 扫描出的网络连接列表
-    private List<ScanResult> mScanResultList;
-    // 网络连接列表
     private List<WifiConfiguration> mWifiConfiguration;
-    // 定义一个WifiLock
-    WifiLock mWifiLock;
+    private List<ScanResult> mScanResultList;
+    private ArrayList<ScanResultPro> mScanResultProList;
 
-
-    ArrayList<ScanResultPro> mScanResultProList;
-
-    // 构造器
     public WifiUtil(Context context) {
-        // 取得WifiManager对象
         mWifiManager = (WifiManager) context
                 .getSystemService(Context.WIFI_SERVICE);
-        // 取得WifiInfo对象
         mWifiInfo = mWifiManager.getConnectionInfo();
         mContext = context;
     }
 
-
-
-    // 打开WIFI
     public void openWifi() {
         if (!mWifiManager.isWifiEnabled()) {
             mWifiManager.setWifiEnabled(true);
@@ -56,7 +42,6 @@ public class WifiUtil {
         }
     }
 
-    // 关闭WIFI
     public void closeWifi() {
         if (mWifiManager.isWifiEnabled()) {
             mWifiManager.setWifiEnabled(false);
@@ -64,9 +49,8 @@ public class WifiUtil {
             Toast.makeText(mContext, "wifi已关闭", Toast.LENGTH_SHORT).show();
         }
     }
-	
 
-    // 检查当前WIFI状态
+
 	// public static final int WIFI_STATE_DISABLED = 1;
 	// public static final int WIFI_STATE_DISABLING = 0;
 	// public static final int WIFI_STATE_ENABLED = 3;
@@ -75,24 +59,17 @@ public class WifiUtil {
     public int checkState() {
         return mWifiManager.getWifiState();
     }
-	
+
 
     public void startScan() {
         mWifiManager.startScan();
-        // 得到扫描结果
         mScanResultList = mWifiManager.getScanResults();
-        // 得到配置好的网络连接
         mWifiConfiguration = mWifiManager.getConfiguredNetworks();
-    }
-
-    // 得到网络列表
-    public List<ScanResult> getWifiList() {
-        return mScanResultList;
     }
 
     public ArrayList<ScanResultPro> getWifiListPro() {
         if (mScanResultList != null) {
-            mScanResultProList = new ArrayList<ScanResultPro>();
+            mScanResultProList = new ArrayList<>();
             for (int i = 0; i < mScanResultList.size(); i++) {
                 ScanResult scanResult = mScanResultList.get(i);
                 ScanResultPro scanResultPro = new ScanResultPro(scanResult);
@@ -101,26 +78,8 @@ public class WifiUtil {
 
         }
         return mScanResultProList;
-
     }
 
-    // 得到配置好的网络
-    public List<WifiConfiguration> getConfiguration() {
-        return mWifiConfiguration;
-    }
-
-    // 指定配置好的网络进行连接
-    public void connectConfiguration(int index) {
-        // 索引大于配置好的网络索引返回
-        if (index > mWifiConfiguration.size()) {
-            return;
-        }
-        // 连接配置好的指定ID的网络
-        mWifiManager.enableNetwork(mWifiConfiguration.get(index).networkId,
-                true);
-    }
-
-    // 添加一个网络并连接
     public boolean addNetwork(WifiConfiguration wcg) {
         if (mWifiInfo != null){
             mWifiManager.disableNetwork(mWifiInfo.getNetworkId());
@@ -139,21 +98,34 @@ public class WifiUtil {
         return  flag;
     }
 
-    public boolean removeWifi(int networkId){
-        return mWifiManager.removeNetwork(networkId);
+    public boolean removeWifi(int netId){
+        return mWifiManager.removeNetwork(netId);
 
     }
 
-    public static DhcpInfo getDhcpInfo(Context mContext){
-        WifiManager wm = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
-        DhcpInfo di = wm.getDhcpInfo();
-        return di;
-    }
-
-    // 断开指定ID的网络
     public void disconnectWifi(int netId) {
         mWifiManager.disableNetwork(netId);
         mWifiManager.disconnect();
+    }
+
+    public DhcpInfo getDhcpInfo(){
+        return mWifiManager.getDhcpInfo();
+    }
+
+    public WifiInfo getConnectedWifiInfo() {
+        return mWifiManager.getConnectionInfo();
+    }
+
+    public String long2ip(long ip){
+        StringBuffer sb=new StringBuffer();
+        sb.append(String.valueOf((int)(ip&0xff)));
+        sb.append('.');
+        sb.append(String.valueOf((int)((ip>>8)&0xff)));
+        sb.append('.');
+        sb.append(String.valueOf((int)((ip>>16)&0xff)));
+        sb.append('.');
+        sb.append(String.valueOf((int)((ip>>24)&0xff)));
+        return sb.toString();
     }
 
     //实际应用方法
@@ -219,12 +191,8 @@ public class WifiUtil {
         return null;
     }
 
+
     //分为三种情况：1没有密码2用wep加密3用wpa加密
-
-
-    public WifiInfo getConnectedWifiInfo() {
-        return mWifiManager.getConnectionInfo();
-    }
 
 
 }

@@ -7,7 +7,7 @@ import android.text.TextUtils;
  */
 public class ScanResultPro{
     private String SSID,BSSID,capabilities,flag,safeLevel,firm,lastScanTime;
-    private int level,frequency,sameSSID;
+    private int level,frequency;
     public ScanResultPro(ScanResult mScanResult) {
         this.SSID = mScanResult.SSID;
         this.BSSID = mScanResult.BSSID;
@@ -25,14 +25,88 @@ public class ScanResultPro{
         this.BSSID = BSSID;
         this.flag = flag;
         this.safeLevel = safeLevel;
-        this.capabilities = null;
+        this.capabilities = "";
         this.level = 0;
         this.frequency = 0;
         this.firm = firm;
         this.lastScanTime = time;
     }
 
-    public static String getEncryptString(String capability){
+
+    public String getLastScanTime() {
+        return lastScanTime;
+    }
+
+    public void setLastScanTime(String lastScanTime) {
+        this.lastScanTime = lastScanTime;
+    }
+
+    public String getFirm() {
+        return firm;
+    }
+
+    public void setFirm(String firm) {
+        this.firm = firm;
+    }
+
+    public String getSafeLevel() {
+        return safeLevel;
+    }
+
+    public void setSafeLevel(String safeLevel) {
+        this.safeLevel = safeLevel;
+    }
+
+    public String getFlag() {
+        return flag;
+    }
+
+    public void setFlag(String flag) {
+        this.flag = flag;
+    }
+
+    public String getCapabilities() {
+        return getEncryptString(capabilities);
+    }
+
+    public void setCapabilities(String capabilities) {
+        this.capabilities = capabilities;
+    }
+
+    public String getBSSID() {
+        return BSSID;
+    }
+
+    public void setBSSID(String BSSID) {
+        this.BSSID = BSSID;
+    }
+
+    public String getSSID() {
+        return SSID;
+    }
+
+    public void setSSID(String SSID) {
+        this.SSID = SSID;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public int getFrequency() {
+        return frequency;
+    }
+
+    public void setFrequency(int frequency) {
+        this.frequency = frequency;
+    }
+
+
+    public String getEncryptString(String capability){
         StringBuilder sb = new StringBuilder();
         if(TextUtils.isEmpty(capability))
             return "unknow";
@@ -47,76 +121,9 @@ public class ScanResultPro{
             sb.append("/");
             sb.append("WPA2");
         }
-//        if(capability.contains("WPS")){
-//            sb.append("/");
-//            sb.append("WPS");
-//        }
+
         if(TextUtils.isEmpty(sb))
             return "OPEN";
         return sb.toString();
-    }
-
-
-
-    public String getSSID() {
-        return SSID;
-    }
-    public String getBSSID() {
-        return BSSID;
-    }
-    public String getFlag() {
-        return flag;
-    }
-    public String getSafeLevel(){return safeLevel;}
-    public String getCapabilities() {
-        return getEncryptString(capabilities);
-    }
-    public int getLevel() {
-        return level;
-    }
-    public String getLastScanTime() {
-        return lastScanTime;
-    }
-    public int getFrequency() {
-        return frequency;
-    }
-    public void setSSID(String sSID) {
-        SSID = sSID;
-    }
-    public void setBSSID(String bSSID) {
-        BSSID = bSSID;
-    }
-    public String getFirm() {return firm;}
-    public void setCapabilities(String capabilities) {
-        this.capabilities = capabilities;
-    }
-    public void setLevel(int level) {
-        this.level = level;
-    }
-    public void setFrequency(int frequency) {
-        this.frequency = frequency;
-    }
-    public void setFlag(String flag){
-        this.flag = flag;
-    }
-    public void setSafeLevel(String safeLevel){
-        this.safeLevel = safeLevel;
-    }
-    public void setLastScanTime(String time) {this.lastScanTime = time;}
-    public String toString() {
-        return SSID+" "+BSSID+" "+level+" "+flag;
-    }
-
-
-    public int getSameSSID() {
-        return sameSSID;
-    }
-
-    public void setSameSSID(int sameSSID) {
-        this.sameSSID = sameSSID;
-    }
-
-    public void setFirm(String firm) {
-        this.firm = firm;
     }
 }
