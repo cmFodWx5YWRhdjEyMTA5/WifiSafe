@@ -81,6 +81,7 @@ public class WifiUtil {
     }
 
     public boolean addNetwork(WifiConfiguration wcg) {
+//        mWifiInfo = getConnectedWifiInfo();
         if (mWifiInfo != null){
             mWifiManager.disableNetwork(mWifiInfo.getNetworkId());
         }
@@ -115,6 +116,9 @@ public class WifiUtil {
     public WifiInfo getConnectedWifiInfo() {
         return mWifiManager.getConnectionInfo();
     }
+    public List<WifiConfiguration> getWifiConfiguration() {
+        return mWifiConfiguration;
+    }
 
     public String long2ip(long ip){
         StringBuffer sb=new StringBuffer();
@@ -128,7 +132,6 @@ public class WifiUtil {
         return sb.toString();
     }
 
-    //实际应用方法
     public WifiConfiguration CreateWifiInfo(String SSID, String Password, int Type)
     {
         WifiConfiguration config = new WifiConfiguration();
@@ -137,8 +140,9 @@ public class WifiUtil {
         config.allowedKeyManagement.clear();
         config.allowedPairwiseCiphers.clear();
         config.allowedProtocols.clear();
-        config.SSID = "\"" + SSID + "\"";
-
+        if(!SSID.startsWith("\""))
+            SSID = "\"" + SSID + "\"";
+        config.SSID = SSID;
         WifiConfiguration tempConfig = this.IsExsits(SSID);
         if(tempConfig != null) {
             mWifiManager.removeNetwork(tempConfig.networkId);
@@ -146,7 +150,7 @@ public class WifiUtil {
 
         if(Type == 1) //WIFICIPHER_NOPASS
         {
-            config.wepKeys[0] = "";
+            config.wepKeys[0] = "\"" + "\"";
             config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
             config.wepTxKeyIndex = 0;
         }
@@ -166,13 +170,7 @@ public class WifiUtil {
         {
             config.preSharedKey = "\""+Password+"\"";
             config.hiddenSSID = true;
-            config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
             config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-            config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-            config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-            config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
             config.status = WifiConfiguration.Status.ENABLED;
         }
         return config;
@@ -190,9 +188,6 @@ public class WifiUtil {
         }
         return null;
     }
-
-
-    //分为三种情况：1没有密码2用wep加密3用wpa加密
 
 
 }

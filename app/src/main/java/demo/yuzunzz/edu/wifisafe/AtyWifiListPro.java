@@ -2,6 +2,7 @@ package demo.yuzunzz.edu.wifisafe;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,6 +40,7 @@ public class AtyWifiListPro extends FragmentActivity{
     private Thread refresh = null;
     private SafeDirect safeFilter;
 
+    final int CONNECT_CHECK = 1;
     final int REFRESH = 2;
 
 
@@ -69,7 +71,11 @@ public class AtyWifiListPro extends FragmentActivity{
                 if( mScanResultPro != null) {
                     if (mInfo != null) {
                         if (mInfo.getSSID() != null && (mInfo.getSSID().equals(mScanResultPro.getSSID()) || mInfo.getSSID().equals("\"" + mScanResultPro.getSSID() + "\""))) {
-                            ShowWifiInfoDialog.show(AtyWifiListPro.this, mInfo, mScanResultPro, mWifiUtil);
+                            int Ip = mInfo.getIpAddress() ;
+                            String strIp = "" + (Ip & 0xFF) + "." + ((Ip >> 8) & 0xFF) + "." + ((Ip >> 16) & 0xFF) + "." + ((Ip >> 24) & 0xFF);
+                            if(!strIp.equals("0.0.0.0")){
+                                ShowWifiInfoDialog.show(AtyWifiListPro.this, mInfo, mScanResultPro, mWifiUtil);
+                            }
                         } else {
                             connectAP(mScanResultPro);
                         }
@@ -77,6 +83,7 @@ public class AtyWifiListPro extends FragmentActivity{
                         connectAP(mScanResultPro);
                     }
                 }
+
 
             }
         });
@@ -142,7 +149,7 @@ public class AtyWifiListPro extends FragmentActivity{
             public void run() {
                 Message message = handler.obtainMessage(REFRESH);
                 handler.sendMessage(message);
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 1500);
             }
         };
         refresh.start();
@@ -250,84 +257,97 @@ public class AtyWifiListPro extends FragmentActivity{
         }
     }
 
-	public void connectAP(final ScanResultPro mScanResultPro){
-		if (!mScanResultPro.getCapabilities().contains("OPEN")){
-			AlertDialog.Builder dialog = new AlertDialog.Builder(AtyWifiListPro.this);
-			dialog.setTitle(mScanResultPro.getSSID());
-			View v = AtyWifiListPro.this.getLayoutInflater().inflate(R.layout.connect_dialog,null);
-			dialog.setView(v);
-			etConnectPwd = (EditText) v.findViewById(R.id.et_connect_pwd);
-			cbCheckPwd = (CheckBox) v.findViewById(R.id.cb_check_pwd);
-			cbCheckPwd.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						if (cbCheckPwd.isChecked()){
-							etConnectPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-						} else {
-							etConnectPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
-						}
-					}
-				});
-			final ScanResultPro mScanResultPro1 = mScanResultPro;
-			dialog.setPositiveButton("连接", new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						if (mScanResultPro1.getCapabilities().contains("WEP")){
-							mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mScanResultPro1.getSSID(),String.valueOf(etConnectPwd.getText()),2));
-						} else {
-							mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mScanResultPro1.getSSID(),String.valueOf(etConnectPwd.getText()),3));
-						}
-                        check = new Thread() {
-                            @Override
-                            public void run() {
-                                String info[] = new String[]{mScanResultPro.getSSID(),String.valueOf(etConnectPwd.getText())};
-                                Message message = handler.obtainMessage(1, info);
-                                handler.sendMessage(message);
-                                handler.postDelayed(this, 1000);
-                            }
-                        };
-                        check.start();
-					}
-				});
-			dialog.setNegativeButton("取消",null);
-			dialog.create().show();
-		} else {
-//                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mResultList.get(position).getSSID(),"",1));
-//                    System.out.println(".......");
-			Toast.makeText(AtyWifiListPro.this,"o00ps!!!!",Toast.LENGTH_SHORT).show();
-		}
-	}
+	public void connectAP(final ScanResultPro mScanResultPro) {
+        List<WifiConfiguration> mList = mWifiUtil.getWifiConfiguration();
+        boolean flag = false;
 
+        if (mList == null || mList.isEmpty()) {
+            if (mScanResultPro.getCapabilities().equals("OPEN")) {
+                mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mScanResultPro.getSSID(), "", 1));
+            } else {
+                connectDialog(mScanResultPro);
+            }
+        } else {
+            for (int i = 0; i < mList.size(); i++) {
+                if (mList.get(i).SSID.equals("\"" + mScanResultPro.getSSID() + "\"")) {
+                    mWifiUtil.addNetwork(mList.get(i));
+                    flag = true;
+                }
+            }
+
+            if (!flag){
+                if (mScanResultPro.getCapabilities().equals("OPEN")) {
+                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mScanResultPro.getSSID(), "", 1));
+                } else {
+                    connectDialog(mScanResultPro);
+                }
+            }
+        }
+    }
+
+    public void connectDialog(final ScanResultPro mScanResultPro){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(AtyWifiListPro.this);
+        dialog.setTitle(mScanResultPro.getSSID());
+        View v = AtyWifiListPro.this.getLayoutInflater().inflate(R.layout.connect_dialog,null);
+        dialog.setView(v);
+        etConnectPwd = (EditText) v.findViewById(R.id.et_connect_pwd);
+        cbCheckPwd = (CheckBox) v.findViewById(R.id.cb_check_pwd);
+        cbCheckPwd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cbCheckPwd.isChecked()){
+                    etConnectPwd.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                } else {
+                    etConnectPwd.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
+            }
+        });
+        dialog.setPositiveButton("连接", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (mScanResultPro.getCapabilities().contains("WEP")){
+                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mScanResultPro.getSSID(),String.valueOf(etConnectPwd.getText()),2));
+                } else {
+                    mWifiUtil.addNetwork(mWifiUtil.CreateWifiInfo(mScanResultPro.getSSID(),String.valueOf(etConnectPwd.getText()),3));
+                }
+                check = new Thread() {
+                    @Override
+                    public void run() {
+                        String info[] = new String[]{mScanResultPro.getSSID(),String.valueOf(etConnectPwd.getText())};
+                        Message message = handler.obtainMessage(1, info);
+                        handler.sendMessage(message);
+                        handler.postDelayed(this, 1000);
+                    }
+                };
+                check.start();
+            }
+        });
+        dialog.setNegativeButton("取消",null);
+        dialog.create().show();
+    }
+
+    int count = 0;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
-                case 1:
-//
-//                    count1++;
-//                    String info[] = (String[])msg.obj;
-//                    if (count1 == 10) {
-//                        handler.removeCallbacks(check);
-//                        Toast.makeText(AtyWifiListPro.this,"验证出错，连接失败",Toast.LENGTH_LONG).show();
-//
-//                    }
-//                    WifiInfo mConnectedInfo = mWifiUtil.getConnectedWifiInfo();
-//                    int Ip = mConnectedInfo.getIpAddress() ;
-//                    String strIp = "" + (Ip & 0xFF) + "." + ((Ip >> 8) & 0xFF) + "." + ((Ip >> 16) & 0xFF) + "." + ((Ip >> 24) & 0xFF);
-//                    if(mConnectedInfo.getSSID() != null && mConnectedInfo.getBSSID() != null && !strIp.equals("0.0.0.0")){
-//                        Toast.makeText(AtyWifiListPro.this,"连接"+info[0]+"成功",Toast.LENGTH_SHORT).show();
-//                        checkWeakPassword(info[1]);
-//                        handler.removeCallbacks(check);
-//                        refresh = new Thread() {
-//                            @Override
-//                            public void run() {
-//                                Message message = handler.obtainMessage(2);
-//                                handler.sendMessage(message);
-//                                handler.postDelayed(this, 500);
-//                            }
-//                        };
-//                        refresh.start();
-//                    }
+                case CONNECT_CHECK:
+                    count++;
+                    String info[] = (String[])msg.obj;
+                    if (count == 10) {
+                        count = 0;
+                        handler.removeCallbacks(check);
+                        Toast.makeText(AtyWifiListPro.this,"验证出错，连接失败",Toast.LENGTH_LONG).show();
+                    }
+                    WifiInfo mConnectedInfo = mWifiUtil.getConnectedWifiInfo();
+                    int Ip = mConnectedInfo.getIpAddress() ;
+                    String strIp = "" + (Ip & 0xFF) + "." + ((Ip >> 8) & 0xFF) + "." + ((Ip >> 16) & 0xFF) + "." + ((Ip >> 24) & 0xFF);
+                    if(mConnectedInfo.getSSID() != null && mConnectedInfo.getBSSID() != null && !strIp.equals("0.0.0.0")){
+                        Toast.makeText(AtyWifiListPro.this,"连接"+info[0]+"成功",Toast.LENGTH_SHORT).show();
+                        checkWeakPassword(info[1]);
+                        handler.removeCallbacks(check);
+                        count = 0;
+                    }
                     break;
                 case REFRESH:
                     mWifiUtil.startScan();
